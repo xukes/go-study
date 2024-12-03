@@ -10,6 +10,17 @@ func main() {
 	fmt.Printf("%d \n", sd)
 
 	callback(3, Add)
+
+	ch1 := make(chan int)
+
+	go func() {
+		close(ch1)
+	}()
+	select {
+	case <-ch1:
+		fmt.Println("close")
+	}
+
 }
 
 func ds(ss int32) bool {
