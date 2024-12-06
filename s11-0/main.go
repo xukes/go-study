@@ -19,6 +19,7 @@ type Pianist struct {
 	name string
 	age  int
 	p    *Player
+	f    func()
 }
 
 func (p *Pianist) play() string {

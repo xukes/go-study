@@ -1,0 +1,35 @@
+syntax="proto3";
+package proto;
+option go_package="/proto";
+
+message UserInfo {
+  int64 user_id = 1;        // 用户ID
+  string username = 2;       // 用户名
+  string email = 3;         // 邮箱
+  string telegram_id = 4;    // Telegram ID
+}
+
+// Balance 余额信息
+message Balance {
+  string currency = 1;      // 货币类型
+  string amount = 2;        // 金额
+}
+enum UserType {
+  fame = 0;
+  Women =1;
+}
+
+
+service HandleService {
+  // SendMessage 发送消息
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {}
+}
+message SendMessageRequest {
+  int64 chat_id = 1;           // 聊天ID
+  string text = 2;             // 消息内容
+}
+
+message SendMessageResponse {
+  bool success = 1;            // 是否成功
+  string message_id = 2;       // 息ID
+}
