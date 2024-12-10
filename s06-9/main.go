@@ -1,8 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 func main() {
+	// 连接到 MySQL 数据库
+
+	if err != nil {
+		log.Fatal("Failed to connect to database")
+	}
 	pos := 4
 	result, pos := fibonacci(pos)
 	fmt.Printf("the %d-th fibonacci number is: %d\n", pos, result)
