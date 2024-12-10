@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	pb "go-study/proto"
+	pb "github.com/xukes/go-study/proto"
 	"google.golang.org/grpc"
 	"net"
 )

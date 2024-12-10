@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	pb "go-study/proto"
+	pb "github.com/xukes/go-study/proto"
 	"net/http"
 	"time"
 )
