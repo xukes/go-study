@@ -1,4 +1,4 @@
-module go-study
+module github.com/xukes/go-study
 
 go 1.22
 
