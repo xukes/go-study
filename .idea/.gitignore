@@ -9,3 +9,6 @@
 /go-study.iml
 /modules.xml
 /vcs.xml
+/dataSources.xml
+/sqldialects.xml
+/.idea/
