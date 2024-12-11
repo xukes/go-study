@@ -21,19 +21,20 @@ func main() {
 		panic(err)
 	}
 	s := grpc.NewServer()
-
 	pb.RegisterHandleServiceServer(s, &u)
 	err = s.Serve(listen)
 	if err != nil {
 		panic(err)
 	}
 }
-
-func (p HandleServiceServer) SendMessage(ctx context.Context, req *pb.SendMessageRequest) (resp *pb.SendMessageResponse, err error) {
+func (HandleServiceServer) SendMessage(ctx context.Context, req *pb.SendMessageRequest) (resp *pb.SendMessageResponse, err error) {
 	resp = &pb.SendMessageResponse{
 		Success:   true,
 		MessageId: "msg success",
 	}
 	fmt.Println(req.Text)
 	return resp, nil
+}
+func (HandleServiceServer) GetMessage(ctx context.Context, req *pb.GetMessageRps) (resp *pb.GetMessageResp, err error) {
+	return &pb.GetMessageResp{ChatId: 23, Text: "msg"}, nil
 }

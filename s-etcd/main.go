@@ -23,7 +23,7 @@ func main() {
 	}
 
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*2)
-	cli.Put(ctx, "/xxxxKey", "/xxxxxVal", clientv3.WithLease(54), clientv3.WithLeaseTTL(int64(122)))
+	//cli.Put(ctx, "/xxxxKey", "/xxxxxVal", clientv3.WithLease(54), clientv3.WithLeaseTTL(int64(122)))
 
 	cli.Delete(ctx, "/xxxxKey")
 

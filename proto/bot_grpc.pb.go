@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	HandleService_SendMessage_FullMethodName = "/proto.HandleService/SendMessage"
+	HandleService_GetMessage_FullMethodName  = "/proto.HandleService/GetMessage"
 )
 
 // HandleServiceClient is the client API for HandleService service.
@@ -28,6 +29,7 @@ const (
 type HandleServiceClient interface {
 	// SendMessage 发送消息
 	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error)
+	GetMessage(ctx context.Context, in *GetMessageRps, opts ...grpc.CallOption) (*GetMessageResp, error)
 }
 
 type handleServiceClient struct {
@@ -48,12 +50,23 @@ func (c *handleServiceClient) SendMessage(ctx context.Context, in *SendMessageRe
 	return out, nil
 }
 
+func (c *handleServiceClient) GetMessage(ctx context.Context, in *GetMessageRps, opts ...grpc.CallOption) (*GetMessageResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMessageResp)
+	err := c.cc.Invoke(ctx, HandleService_GetMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HandleServiceServer is the server API for HandleService service.
 // All implementations must embed UnimplementedHandleServiceServer
 // for forward compatibility.
 type HandleServiceServer interface {
 	// SendMessage 发送消息
 	SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error)
+	GetMessage(context.Context, *GetMessageRps) (*GetMessageResp, error)
 	mustEmbedUnimplementedHandleServiceServer()
 }
 
@@ -66,6 +79,9 @@ type UnimplementedHandleServiceServer struct{}
 
 func (UnimplementedHandleServiceServer) SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+}
+func (UnimplementedHandleServiceServer) GetMessage(context.Context, *GetMessageRps) (*GetMessageResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMessage not implemented")
 }
 func (UnimplementedHandleServiceServer) mustEmbedUnimplementedHandleServiceServer() {}
 func (UnimplementedHandleServiceServer) testEmbeddedByValue()                       {}
@@ -106,6 +122,24 @@ func _HandleService_SendMessage_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HandleService_GetMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessageRps)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HandleServiceServer).GetMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HandleService_GetMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HandleServiceServer).GetMessage(ctx, req.(*GetMessageRps))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HandleService_ServiceDesc is the grpc.ServiceDesc for HandleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -116,6 +150,10 @@ var HandleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendMessage",
 			Handler:    _HandleService_SendMessage_Handler,
+		},
+		{
+			MethodName: "GetMessage",
+			Handler:    _HandleService_GetMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -23,6 +23,18 @@ enum UserType {
 service HandleService {
   // SendMessage 发送消息
   rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {}
+  rpc GetMessage(GetMessageRps)returns(GetMessageResp){}
+}
+message BaseMsg {
+  int64 code = 1;
+  string msg = 2;
+}
+message GetMessageRps {
+  BaseMsg baseMsg = 1;
+}
+message GetMessageResp{
+  int64 chat_id = 1;           // 聊天ID
+  string text = 2;             // 消息内容
 }
 message SendMessageRequest {
   int64 chat_id = 1;           // 聊天ID

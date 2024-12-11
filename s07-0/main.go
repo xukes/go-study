@@ -47,9 +47,17 @@ func main() {
 	getName(&userT)
 
 	route := gin.Default()
-	route.Use()
+
 	v1 := route.Group("/v1")
 	v2 := v1.Group("/gg")
+	v2.Use(func(c *gin.Context) {
+		// 在处理请求之前执行的逻辑
+		// 可以在此处进行身份验证、日志记录等操作
+		// 继续处理请求
+		c.Next()
+		// 在处理请求之后执行的逻辑
+		// 可以在此处记录请求处理时间、处理错误等
+	})
 	v2.POST("post/", handlePost)
 	v2.POST("/upload", upload)
 
@@ -58,6 +66,7 @@ func main() {
 		return
 	}
 }
+
 func upload(c *gin.Context) {
 	file, _ := c.FormFile("xxx")
 	c.Param("sd")

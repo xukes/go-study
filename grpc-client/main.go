@@ -25,4 +25,23 @@ func main() {
 	if err != nil {
 	}
 	fmt.Println(res)
+	var req1 *pb.GetMessageResp
+	var err2 error
+
+	ch := make(chan int, 3)
+	defer func() {
+		close(ch)
+	}()
+	startT := time.Now().UnixMilli()
+	go func() {
+		_ = <-ch
+		fmt.Println(time.Now().UnixMilli() - startT)
+	}()
+	for i := 0; i < 1000; i++ {
+		req1, err2 = accountClient.GetMessage(ctx, &pb.GetMessageRps{})
+		if err2 != nil {
+		}
+	}
+	ch <- 2
+	fmt.Println(req1)
 }
