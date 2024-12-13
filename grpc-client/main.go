@@ -28,17 +28,18 @@ func main() {
 	var req1 *pb.GetMessageResp
 	var err2 error
 
-	ch := make(chan int, 3)
+	ch := make(chan int)
 	defer func() {
 		close(ch)
 	}()
-	startT := time.Now().UnixMilli()
+
 	go func() {
+		startT := time.Now().UnixMilli()
 		_ = <-ch
 		fmt.Println(time.Now().UnixMilli() - startT)
 	}()
 	for i := 0; i < 1000; i++ {
-		req1, err2 = accountClient.GetMessage(ctx, &pb.GetMessageRps{})
+		req1, err2 = accountClient.GetMessage(ctx, &pb.GetMessageRps{BaseMsg: &pb.BaseMsg{Msg: fmt.Sprintf(" index:%d", i)}})
 		if err2 != nil {
 		}
 	}

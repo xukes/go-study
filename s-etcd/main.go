@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/md5"
 	"fmt"
 	"go.etcd.io/etcd/client/v3"
 	"time"
@@ -21,7 +22,13 @@ func main() {
 		fmt.Println("Failed to get key from etcd:", err)
 		return
 	}
+	h := md5.New()
 
+	bs := []byte("1")
+
+	ns := fmt.Sprintf("%x", h.Sum(bs))
+
+	fmt.Println(ns)
 	ctx, _ := context.WithTimeout(context.Background(), time.Second*2)
 	//cli.Put(ctx, "/xxxxKey", "/xxxxxVal", clientv3.WithLease(54), clientv3.WithLeaseTTL(int64(122)))
 
