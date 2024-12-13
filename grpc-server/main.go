@@ -39,7 +39,7 @@ func main() {
 	Less(&MyPerson1{}, &MyPerson2{}, "")
 
 	addr := ":8082"
-	listen, err := net.Listen("udp", addr)
+	listen, err := net.Listen("tcp", addr)
 	if err != nil {
 		panic(err)
 	}

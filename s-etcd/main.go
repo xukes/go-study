@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/md5"
 	"fmt"
-	"go.etcd.io/etcd/client/v3"
 	"time"
 )
 
