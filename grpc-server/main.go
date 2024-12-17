@@ -14,21 +14,21 @@ type MyPerson interface {
 type MyPerson1 struct {
 }
 type MyPerson2 struct {
+	Age  int
+	Name string
 }
 
-func (m *MyPerson2) Less() {
+func (m MyPerson2) Less() bool {
+	return m.Age < 10
 }
+
 func (m *MyPerson1) Less() {
 }
 
 type Ordered interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr |
-		~float32 | ~float64 | ~string | ~*MyPerson
-}
-
-func Less[T MyPerson, V interface{}](x T, y V, z string) {
-
+		~float32 | ~float64 | ~string
 }
 
 type HandleServiceServer struct {
@@ -36,8 +36,6 @@ type HandleServiceServer struct {
 }
 
 func main() {
-	Less(&MyPerson1{}, &MyPerson2{}, "")
-
 	addr := ":8082"
 	listen, err := net.Listen("tcp", addr)
 	if err != nil {

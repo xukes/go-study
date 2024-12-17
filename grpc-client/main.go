@@ -5,6 +5,7 @@ import (
 	"fmt"
 	pb "github.com/xukes/go-study/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/anypb"
 	"time"
 )
 
@@ -32,6 +33,13 @@ func main() {
 	defer func() {
 		close(ch)
 	}()
+
+	two := &pb.TwoBaseMsg{
+		Data:      &anypb.Any{},
+		Code:      1,
+		MessageId: "esd",
+	}
+	fmt.Println(two)
 
 	go func() {
 		startT := time.Now().UnixMilli()
