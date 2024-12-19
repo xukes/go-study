@@ -10,6 +10,20 @@ import (
 )
 
 func main() {
+	type RectTestTransform struct {
+		name string
+		f    func(int, int, string) string
+	}
+
+	rec := RectTestTransform{
+		name: "name",
+		f: func(i int, i2 int, s string) string {
+			return ""
+		},
+	}
+
+	rec.f(1, 2, "3")
+
 	accountAddr := fmt.Sprintf("%s:%d", "127.0.0.1", 8082)
 	accountConn, err := grpc.Dial(accountAddr, grpc.WithInsecure())
 	if err != nil {
