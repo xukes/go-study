@@ -1,6 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	cache "github.com/xukes/go-study/common/cache"
+)
+
+type Person struct {
+	Name string
+	Age  int
+}
 
 func main() {
 	//var map1 map[string]int32
@@ -17,8 +25,10 @@ func main() {
 	delete(map2, "s3ds")
 	fmt.Println(isPresent)
 
-	f := func() {
-		fmt.Println("defer")
-	}
-	defer f()
+	cache.Instance().SetVal("name", &Person{Name: "xx", Age: 19})
+	cache.Instance().SetVal("user", "user school")
+	per := *cache.Instance().GetVal("name").(*Person)
+	fmt.Println(per)
+	fmt.Println(cache.Instance().GetVal("user"))
+
 }

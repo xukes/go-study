@@ -1,9 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/xukes/go-study/common"
 	pb "github.com/xukes/go-study/proto"
 	"net/http"
 	"time"
@@ -14,7 +14,7 @@ type Person struct {
 	Age      int       `form:"age" binding:"required,gt=10" json:"age"`
 	Name     string    `form:"name" binding:"required" json:"name"`
 	Birthday time.Time `form:"birthday" time_format:"2006-01-02" time_utc:"1" json:"birthday"`
-	user     int       "how use it"
+	user     int
 }
 type Pattern struct {
 	Age int
@@ -28,40 +28,18 @@ type NewUser struct {
 }
 
 func main() {
-	b := NewUser{Person: Person{}, Per: Person{Age: 1, Name: "111", Birthday: time.Now(), user: 12}, School: "USDT"}
-	fmt.Println(b)
-	fmt.Println(b.Person.Age)
-	bt, err := json.Marshal(b)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(string(bt))
-	var newBa pb.Balance
-
-	err = json.Unmarshal(bt, &newBa)
-	if err != nil {
-		return
-	}
-
-	userT := pb.UserType_Women
-	getName(&userT)
-
 	route := gin.Default()
-
+	route.Use(common.HandlerError, common.ShowHandleTime)
+	//route.Use(common.HandlerError)
 	v1 := route.Group("/v1")
 	v2 := v1.Group("/gg")
-	v2.Use(func(c *gin.Context) {
-		// 在处理请求之前执行的逻辑
-		// 可以在此处进行身份验证、日志记录等操作
-		// 继续处理请求
-		c.Next()
-		// 在处理请求之后执行的逻辑
-		// 可以在此处记录请求处理时间、处理错误等
-	})
+
+	// gin 多个Use该处理逻辑是什么。
+
 	v2.POST("post/", handlePost)
 	v2.POST("/upload", upload)
 
-	err = route.Run(":8443")
+	err := route.Run(":8443")
 	if err != nil {
 		return
 	}
@@ -80,10 +58,28 @@ func upload(c *gin.Context) {
 func handlePost(c *gin.Context) {
 	var person Person
 	if err := c.ShouldBind(&person); err != nil {
-		c.String(500, fmt.Sprint(err))
+		c.Error(fmt.Errorf("this is an error")).SetMeta(&OrderMessage{Code: 29, Msg: err.Error(), Data: Orm{
+			IsTx: false,
+		}})
 		return
 	}
-	c.JSON(200, person)
+	if person.Age > 100 {
+		err := c.Error(fmt.Errorf("this is an error")).SetMeta(&OrderMessage{Code: 29, Msg: "this is a error", Data: Orm{
+			IsTx: false,
+		}})
+
+		if err != nil {
+		}
+		return
+	}
+	o := &OrderMessage{Data: person, Msg: "sds", Code: 23}
+	c.JSON(200, o)
+}
+
+type OrderMessage struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data any    `json:"data"`
 }
 
 func getName(userType *pb.UserType) {
@@ -93,7 +89,7 @@ func getName(userType *pb.UserType) {
 type Orm struct {
 	//alias *alias
 	//db    dbQuerier
-	isTx bool
+	IsTx bool `json:"isTx"`
 }
 
 func getArr(sad int16, len **int) {
