@@ -1,25 +1,18 @@
 package cache
 
-import "sync"
-
-type InstanceType struct {
+type instanceType struct {
 	M map[string]interface{}
 }
 
-var ins = &InstanceType{M: make(map[string]any)}
+var Ins *instanceType
 
-var once sync.Once
-
-func Instance() *InstanceType {
-	//once.Do(func() {
-	//	ins = &InstanceType{M: make(map[string]any)}
-	//})
-	return ins
+func init() {
+	Ins = &instanceType{M: make(map[string]any)}
 }
 
-func (i *InstanceType) SetVal(key string, val any) {
+func (i *instanceType) SetVal(key string, val any) {
 	i.M[key] = val
 }
-func (i *InstanceType) GetVal(key string) any {
+func (i *instanceType) GetVal(key string) any {
 	return i.M[key]
 }

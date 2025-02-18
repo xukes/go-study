@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/xukes/go-study/common"
 	pb "github.com/xukes/go-study/proto"
+	"google.golang.org/grpc"
 	"net/http"
 	"time"
 )
@@ -36,16 +39,27 @@ func main() {
 
 	// gin 多个Use该处理逻辑是什么。
 
-	v2.POST("post/", handlePost)
-	v2.POST("/upload", upload)
+	accountAddr := fmt.Sprintf("%s:%d", "127.0.0.1", 8082)
+	accountConn, err := grpc.Dial(accountAddr, grpc.WithInsecure())
+	if err != nil {
+	}
+	handleServiceClient := pb.NewHandleServiceClient(accountConn)
+	h := &Hand{handleServiceClient}
 
-	err := route.Run(":8443")
+	v2.POST("post/", h.handlePost)
+	v2.POST("/upload", h.upload)
+
+	err = route.Run(":8443")
 	if err != nil {
 		return
 	}
 }
 
-func upload(c *gin.Context) {
+type Hand struct {
+	handleServiceClient pb.HandleServiceClient
+}
+
+func (h *Hand) upload(c *gin.Context) {
 	file, _ := c.FormFile("xxx")
 	c.Param("sd")
 	err := c.SaveUploadedFile(file, file.Filename)
@@ -55,7 +69,10 @@ func upload(c *gin.Context) {
 	c.String(http.StatusOK, file.Filename)
 }
 
-func handlePost(c *gin.Context) {
+//	func handelError() {
+//		fmt.Println("handelError")
+//	}
+func (h *Hand) handlePost(c *gin.Context) {
 	var person Person
 	if err := c.ShouldBind(&person); err != nil {
 		c.Error(fmt.Errorf("this is an error")).SetMeta(&OrderMessage{Code: 29, Msg: err.Error(), Data: Orm{
@@ -63,6 +80,7 @@ func handlePost(c *gin.Context) {
 		}})
 		return
 	}
+
 	if person.Age > 100 {
 		err := c.Error(fmt.Errorf("this is an error")).SetMeta(&OrderMessage{Code: 29, Msg: "this is a error", Data: Orm{
 			IsTx: false,
@@ -72,8 +90,45 @@ func handlePost(c *gin.Context) {
 		}
 		return
 	}
+
+	context.WithCancel(context.Background())
+	context.WithDeadline(context.Background(), time.Now().Add(time.Second*5))
+	context.WithTimeout(context.Background(), time.Second)
+	//context.WithValue(c.Request.Context(), "person", person)
+	//context.WithValue(c.Request.Context(), "age", person.Age)
+	context.TODO()
+
+	ctx := context.TODO()
+	ctx = context.WithValue(ctx, "name", &Person{Age: 13})
+	//ctx = context.WithValue(ctx, "key", "user")
+	//ctx = context.WithValue(ctx, "key1", "user")
+	//ctx = context.WithValue(ctx, "key2", "user")
+	//ctx = context.WithValue(ctx, "key3", "user")
+	//defer han()
+	rsp, err1 := h.handleServiceClient.SendMessage(ctx, &pb.SendMessageRequest{
+		ChatId: int64(person.Age),
+		Text:   person.Name,
+	})
+
+	p, ok := ctx.Value("name").(*Person)
+	if ok {
+		p.Age = 200
+		fmt.Println(*p)
+	}
+	proseContext(ctx)
+	fmt.Println(err1, rsp)
+
+	fmt.Println(uuid.New().String())
+
 	o := &OrderMessage{Data: person, Msg: "sds", Code: 23}
 	c.JSON(200, o)
+}
+
+func proseContext(ctx context.Context) {
+	sd, ok := ctx.Value("name").(*Person)
+	if ok {
+		fmt.Println(*sd)
+	}
 }
 
 type OrderMessage struct {

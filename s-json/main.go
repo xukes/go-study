@@ -6,7 +6,7 @@ import (
 )
 
 type BaseMsg struct {
-	Data any    `json:"data"`
+	Data any    `json:"data"` // 可以是任何数据类型
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
@@ -44,6 +44,14 @@ func main() {
 	fmt.Println(sd)
 	fmt.Println(*b2)
 	fmt.Println()
+
+	b3 := &BaseMsg{
+		Data: 2,
+		Code: 12,
+		Msg:  "success",
+	}
+	b3S, _ := json.Marshal(b3)
+	fmt.Println(string(b3S))
 }
 
 func getName(b *BaseMsg) {
