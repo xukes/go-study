@@ -9,9 +9,10 @@ func init() {
 	fmt.Println("utils init")
 
 	us := &User{
-		DtUser.Age: 123,
-		School:     "xxx",
+		DtUser{Name: "xxx", Age: 12, Gender: "women"},
+		"xxx",
 	}
+	us.rel()
 	fmt.Println(us)
 }
 
@@ -26,7 +27,15 @@ func (DtUser) TableName() string {
 	return "dt_user"
 }
 
+func (dt *DtUser) rel() string {
+	return ""
+}
+
 type User struct {
 	DtUser
 	School string
+}
+
+func (u *User) rel() string {
+	return ""
 }
